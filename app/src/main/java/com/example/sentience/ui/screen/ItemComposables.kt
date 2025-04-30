@@ -30,7 +30,7 @@ fun ArticleCard(article: ArticleItem) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = article.content.take(100) + "...",
+                text = article.body.take(100) + "...",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

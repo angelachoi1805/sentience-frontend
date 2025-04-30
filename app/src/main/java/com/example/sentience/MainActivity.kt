@@ -12,7 +12,7 @@ import com.example.sentience.ui.screen.RegisterScreen
 import com.example.sentience.viewmodel.AuthViewModel
 import com.example.sentience.viewmodel.AuthViewModelFactory
 import com.example.sentience.network.RetrofitInstance
-import com.example.sentience.ui.screen.LoginScreen
+import com.example.sentience.ui.screen.*
 import com.example.sentience.ui.theme.SentienceTheme
 import com.example.sentience.util.TokenManager
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         authViewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
 
         setContent {
-            SentienceTheme { // <- This is the wrapper from the theme builder
+            SentienceTheme {
                 val navController = rememberNavController()
 
                 NavHost(navController = navController, startDestination = "login") {
@@ -47,7 +47,13 @@ class MainActivity : ComponentActivity() {
                             onNavigateBack = { navController.popBackStack() }
                         )
                     }
-                    composable("home"){}
+//                    composable("home"){
+//                        HomeScreen(
+//                            viewModel = authViewModel,
+//                            username = "User",
+//                            onNavigateBack = {navController.popBackStack() }
+//                        )
+//                    }
                 }
             }
         }
