@@ -5,6 +5,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.GET
 
 interface SentienceApi {
 
@@ -15,6 +16,9 @@ interface SentienceApi {
     // Register endpoint
     @POST("register")
     suspend fun register(@Body request: RegisterRequest): Response<TokenResponse>
+
+    @GET("profile")
+    suspend fun getProfile(): UserProfile
 
     // Ask AI endpoint
     @POST("/ask-ai")

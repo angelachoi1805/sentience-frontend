@@ -28,4 +28,9 @@ class AuthRepository(
         }
         return response
     }
+
+    suspend fun getUserProfile(): UserProfile {
+        return api.getProfile()
+    }
+
 }

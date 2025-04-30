@@ -1,27 +1,20 @@
 package com.example.sentience.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.example.sentience.viewmodel.AuthViewModel
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.sentience.util.TokenManager
+import com.example.sentience.viewmodel.AuthViewModel
+import com.example.sentience.ui.component.*
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
@@ -41,84 +34,55 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val tokenManager = TokenManager(context)
-    var mood by remember { mutableStateOf(2f) }
-    val moodDescriptions = listOf(
-        "Woke up on the wrong side of the bed",
-        "Meh, could be worse",
-        "Just another day",
-        "Feeling pretty good",
-        "Over the moons!"
-    )
 
-    // Simulated tracker: last 7 days moods (nullable if not set)
-    var moodHistory by remember { mutableStateOf(mutableMapOf<LocalDate, Int>()) }
-    val today = LocalDate.now()
-    val pastWeek = (0..6).map { today.minusDays((6 - it).toLong()) }
-    val weekdays = pastWeek.map { it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
+    // Bottom Navigation
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.background
+    ) {
+//        BottomNavItem("Chat", HomeTab.Chat, onBottomNavSelect)
+//        BottomNavItem("Home", HomeTab.Home, onBottomNavSelect)
+//        BottomNavItem("Profile", HomeTab.Profile, onBottomNavSelect)
+    }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Greeting
-        Text(
-            text = "Hi $username,\nhow are you feeling today?",
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
+    //LaunchedEffect(Unit) {
+    //    viewModel.fetchUsername()
+    //}
 
-        // Mood slider
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Slider(
-                value = mood,
-                onValueChange = { mood = it },
-                valueRange = 0f..4f,
-                steps = 4,
-                modifier = Modifier.fillMaxWidth()
-            )
+    @Composable
+    fun HomeScreen(viewModel: AuthViewModel) {
+        val mood = remember { mutableFloatStateOf(2f) }
+        val moodDescriptions = listOf(...)
+
+        val username = viewModel.username.collectAsState()
+        val today = LocalDate.now()
+        val pastWeek = (0..6).map { today.minusDays((6 - it).toLong()) }
+        val weekdays = pastWeek.map { it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
+
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = moodDescriptions[mood.toInt()],
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(vertical = 4.dp)
+                text = "Hi ${username.value},",
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
             )
-            Button(onClick = {
-                moodHistory = moodHistory.toMutableMap().apply {
-                    put(today, mood.toInt())
-                }
-            }) {
-                Text("Submit Mood")
-            }
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            MoodSlider(
+                mood = mood.floatValue,
+                onMoodChange = { mood.floatValue = it },
+                onSubmitMood = {
+                    viewModel.saveMood(today, mood.floatValue.toInt())
+                },
+                moodDescription = moodDescriptions[mood.floatValue.toInt()]
+            )
 
-        // Mood Tracker
-        Text(
-            text = "Mood Tracker",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
-        Row(modifier = Modifier.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            pastWeek.forEachIndexed { index, date ->
-                val moodValue = moodHistory[date]
-                val circleColor = moodValue?.let { Color(0xFF6200EE).copy(alpha = (0.3f + it * 0.15f)) } ?: Color.LightGray
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(circleColor)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+            MoodCalendar(
+                moodHistory = viewModel.moodHistory,
+                pastWeek = pastWeek,
+                weekdays = weekdays
+            )
         }
-        Row {
-            weekdays.forEach { day ->
-                Text(
-                    text = day,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
+    }
 
-        Spacer(modifier = Modifier.height(24.dp))
+
+    Spacer(modifier = Modifier.height(24.dp))
 
         // Quote of the Day
         Text(
@@ -169,15 +133,6 @@ fun HomeScreen(
         }
 
         Spacer(modifier = Modifier.height(56.dp)) // space for bottom nav
-    }
-
-    // Bottom Navigation
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.background
-    ) {
-//        BottomNavItem("Chat", HomeTab.Chat, onBottomNavSelect)
-//        BottomNavItem("Home", HomeTab.Home, onBottomNavSelect)
-//        BottomNavItem("Profile", HomeTab.Profile, onBottomNavSelect)
     }
 }
 
