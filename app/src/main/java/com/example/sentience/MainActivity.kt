@@ -38,7 +38,8 @@ class MainActivity : ComponentActivity() {
                     composable("login") {
                         LoginScreen(
                             viewModel = authViewModel,
-                            onNavigateToRegister = { navController.navigate("register") }
+                            onNavigateToRegister = { navController.navigate("register") },
+                            onLoginSuccess = { navController.navigate("home") }
                         )
                     }
                     composable("register") {
@@ -47,13 +48,13 @@ class MainActivity : ComponentActivity() {
                             onNavigateBack = { navController.popBackStack() }
                         )
                     }
-//                    composable("home"){
-//                        HomeScreen(
-//                            viewModel = authViewModel,
-//                            username = "User",
-//                            onNavigateBack = {navController.popBackStack() }
-//                        )
-//                    }
+                    composable("home"){
+                        HomeScreen(
+                            viewModel = authViewModel,
+                            username = "User",
+                            onNavigateBack = {navController.popBackStack() }
+                        )
+                    }
                 }
             }
         }
