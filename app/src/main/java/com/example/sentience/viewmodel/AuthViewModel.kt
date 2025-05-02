@@ -1,23 +1,24 @@
 package com.example.sentience.viewmodel
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.MutableState
 import com.example.sentience.data.AuthRepository
 import com.example.sentience.network.RetrofitInstance
 import com.example.sentience.model.RegisterRequest
 import com.example.sentience.model.TokenResponse
+import com.example.sentience.model.UserProfile
+import com.example.sentience.util.TokenManager
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
-
     private val _registerResult = MutableLiveData<Response<TokenResponse>>()
     val registerResult: LiveData<Response<TokenResponse>> get() = _registerResult
-
     fun register(username: String, password: String, profilePic: String) {
         viewModelScope.launch {
             val response = repository.register(username, password, profilePic)
@@ -35,15 +36,18 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    val username = mutableStateOf("User")
+    val fetchUserNameResult: MutableLiveData<String> = MutableLiveData()
 
     fun fetchUsername() {
         viewModelScope.launch {
             try {
-                val profile = repository.getUserProfile()
-                username.value = profile.username
+                val response = repository.getUserProfile()
+                if (response.isSuccessful) {
+                    val username = response.body()?.user?.user_id ?: "Unknown"
+                    fetchUserNameResult.value = username
+                }
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Failed to fetch username", e)
+                // Handle error
             }
         }
     }

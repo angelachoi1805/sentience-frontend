@@ -17,8 +17,10 @@ interface SentienceApi {
     @POST("register")
     suspend fun register(@Body request: RegisterRequest): Response<TokenResponse>
 
-    @GET("profile")
-    suspend fun getProfile(): UserProfile
+    @GET("/me")
+    suspend fun getProfile(
+        @Header("Authorization") token: String,
+    ): Response<UserProfile>
 
     // Ask AI endpoint
     @POST("/ask-ai")

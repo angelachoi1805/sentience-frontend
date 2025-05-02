@@ -1,5 +1,6 @@
 package com.example.sentience.data
 
+import android.util.Log
 import com.example.sentience.model.*
 import com.example.sentience.network.SentienceApi
 import com.example.sentience.util.TokenManager
@@ -29,8 +30,9 @@ class AuthRepository(
         return response
     }
 
-    suspend fun getUserProfile(): UserProfile {
-        return api.getProfile()
+    suspend fun getUserProfile(): Response<UserProfile> {
+        Log.d("REQUEST TOKEN", tokenManager.getToken() ?: "")
+        return api.getProfile(  tokenManager.getToken() ?: "")
     }
 
 }

@@ -13,7 +13,7 @@ class TokenManager(context: Context) {
     }
 
     fun getToken(): String? {
-        return prefs.getString("jwt_token", null)
+        return "Bearer ${prefs.getString("jwt_token", null)}"
     }
 
     fun clearToken() {
