@@ -1,18 +1,11 @@
 package com.example.sentience.viewmodel
 
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.sentience.data.AuthRepository
-import com.example.sentience.network.RetrofitInstance
-import com.example.sentience.model.RegisterRequest
 import com.example.sentience.model.TokenResponse
-import com.example.sentience.model.UserProfile
-import com.example.sentience.util.TokenManager
 import kotlinx.coroutines.launch
 import retrofit2.Response
 

@@ -28,4 +28,10 @@ interface SentienceApi {
         @Header("Authorization") token: String,
         @Body request: AIRequest
     ): Response<AIResponse>
+
+    @GET("articles")
+    suspend fun getArticles(): List<ArticleItem>
+
+    @GET("tests")
+    suspend fun getTests(): List<TestItem>
 }
