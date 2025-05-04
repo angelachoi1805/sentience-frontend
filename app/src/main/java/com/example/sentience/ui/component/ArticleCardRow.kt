@@ -53,7 +53,7 @@ fun ArticleCardRow(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = article.description.take(100) + "...",
+                            text = (article.body ?: "").take(100) + "...",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }

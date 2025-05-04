@@ -8,7 +8,6 @@ import retrofit2.Response
 
 class ChatRepository(private val api: SentienceApi, private val tokenManager: TokenManager) {
     suspend fun askAI(prompt: String): Response<AIResponse> {
-        val response = api.askAI(tokenManager.getToken() ?: "", AIRequest(prompt))
-        return response
+        return api.askAI(AIRequest(prompt))
     }
 }

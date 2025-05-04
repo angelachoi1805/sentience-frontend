@@ -3,8 +3,9 @@ package com.example.sentience.ui.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +22,15 @@ fun HomeScreen(
     username: String,
     articles: List<ArticleItem>,
     tests: List<TestItem>,
+    moodHistory: Map<LocalDate, Int>,
     onArticleClick: (ArticleItem) -> Unit,
-    onSeeAllArticles: () -> Unit,
-    onStartTestClick: (TestItem) -> Unit,
-    onSeeAllTests: () -> Unit,
-    onBottomNavSelect: (BottomNavItem) -> Unit
+    onTestClick: (TestItem) -> Unit,
+    onMoodChange: (Float) -> Unit,
+    onSubmitMood: () -> Unit,
+    mood: Float,
+    moodDescription: String,
+    selectedItem: BottomNavItem,
+    onItemSelected: (BottomNavItem) -> Unit
 ) {
     // Greeting and Mood State
     var mood by remember { mutableStateOf(2f) }
@@ -43,56 +48,62 @@ fun HomeScreen(
     val pastWeek = (0..6).map { today.minusDays((6 - it).toLong()) }
     val weekdays = pastWeek.map { it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = selectedItem,
+                onItemSelected = onItemSelected
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            // Greeting Text
+            GreetingSection(username)
 
-        // Greeting Text
-        GreetingSection(username)
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            // Mood Slider
+            MoodSlider(
+                mood = mood,
+                onMoodChange = onMoodChange,
+                onSubmitMood = onSubmitMood,
+                moodDescription = moodDescriptions[mood.toInt()]
+            )
 
-        // Mood Slider
-        MoodSlider(
-            mood = mood,
-            onMoodChange = { mood = it },
-            onSubmitMood = { moodHistory[today] = mood.toInt() },
-            moodDescription = moodDescriptions[mood.toInt()]
-        )
+            // Mood Calendar
+            MoodCalendar(
+                moodHistory = moodHistory,
+                pastWeek = pastWeek,
+                weekdays = weekdays
+            )
 
-        // Mood Calendar
-        MoodCalendar(
-            moodHistory = moodHistory,
-            pastWeek = pastWeek,
-            weekdays = weekdays
-        )
-
-        // Quote of the Day
-        QuoteBox(
+            // Quote of the Day
+            QuoteBox(
 //            quote = quotesOfDay.first,
 //            author = quotesOfDay.second
-        )
+            )
 
-        // Articles Row
-        ArticleCardRow(
-            articles = articles,
-            onSeeAllClick = onSeeAllArticles,
-            onArticleClick = onArticleClick
-        )
+            // Articles Row
+            ArticleCardRow(
+                articles = articles,
+                onSeeAllClick = { },
+                onArticleClick = onArticleClick
+            )
 
-        // Tests Row
-        TestCardRow(
-            tests = tests,
-            onSeeAllClick = onSeeAllTests,
-            onStartTestClick = onStartTestClick
-        )
+            // Tests Row
+            TestCardRow(
+                tests = tests,
+                onSeeAllClick = { },
+                onStartTestClick = onTestClick
+            )
+        }
     }
-
-    // Bottom Navigation
-    BottomNavigationBar(
-        selectedItem = BottomNavItem.Home,
-        onItemSelected = onBottomNavSelect
-    )
 }
 
 @Composable

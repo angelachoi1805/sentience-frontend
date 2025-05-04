@@ -1,11 +1,11 @@
 package com.example.sentience.model
 
 data class ArticleItem(
-    val id: String,
+    val id: Int,
     val title: String,
     val body: String,
     val author: String,
-    val readTimeMinutes: Int, // estimate from body length
-    val description: String // first ~100 chars of body
+    val created_at: String,
+    val readTimeMinutes: Int = 5 // Default value, can be calculated from body length
 )
 

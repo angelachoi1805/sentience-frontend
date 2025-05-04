@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import com.example.sentience.ui.theme.*
 import com.example.sentience.viewmodel.ChatViewModel
 
 @Composable
@@ -35,10 +36,14 @@ fun ChatScreen(
         ) {
             items(messages.reversed()) { msg ->
                 ChatBubble(text = msg, isUser = true)
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp)) // spacing between user and AI bubbles
+                if (sendMessageResult != null && sendMessageResult!!.isNotBlank()) {
+                    ChatBubble(text = sendMessageResult!!, isUser = false)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
-    ChatBubble(sendMessageResult ?: "", false)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -49,7 +54,7 @@ fun ChatScreen(
                 value = message,
                 onValueChange = { message = it },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Введите сообщение... $username") }
+                placeholder = { Text("Enter your message...") }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
@@ -59,7 +64,7 @@ fun ChatScreen(
                     message = TextFieldValue("")
                 }
             }) {
-                Text("Отправить")
+                Text("Send")
             }
         }
     }
@@ -74,14 +79,14 @@ fun ChatBubble(text: String, isUser: Boolean) {
         contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
     ) {
         Surface(
-            color = if (isUser) Color(0xFFDCF8C6) else Color(0xFFECECEC),
+            color = if (isUser) primaryContainerLight else tertiaryContainerLight,
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 2.dp
         ) {
             Text(
                 text = text,
                 modifier = Modifier.padding(12.dp),
-                color = Color.Black
+                color = if (isUser) onPrimaryContainerLight else onTertiaryLight
             )
         }
     }

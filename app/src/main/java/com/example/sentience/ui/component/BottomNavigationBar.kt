@@ -1,7 +1,7 @@
 package com.example.sentience.ui.component
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class BottomNavItem(val label: String, val icon: ImageVector) {
-    Chat("Chat", Icons.Filled.Chat),
+    Chat("Chat", Icons.AutoMirrored.Filled.Chat),
     Home("Home", Icons.Filled.Home),
     Profile("Profile", Icons.Filled.Person)
 }

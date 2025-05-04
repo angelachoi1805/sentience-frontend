@@ -3,11 +3,14 @@ package com.example.sentience.network
 import com.example.sentience.model.*
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.POST
+import android.util.Log
 
 interface SentienceApi {
+    companion object {
+        private const val TAG = "SentienceApi"
+    }
 
     // Login endpoint
     @POST("login")
@@ -18,20 +21,15 @@ interface SentienceApi {
     suspend fun register(@Body request: RegisterRequest): Response<TokenResponse>
 
     @GET("/me")
-    suspend fun getProfile(
-        @Header("Authorization") token: String,
-    ): Response<UserProfile>
+    suspend fun getProfile(): Response<UserProfile>
 
     // Ask AI endpoint
     @POST("/ask-ai")
-    suspend fun askAI(
-        @Header("Authorization") token: String,
-        @Body request: AIRequest
-    ): Response<AIResponse>
+    suspend fun askAI(@Body request: AIRequest): Response<AIResponse>
 
-    @GET("articles")
-    suspend fun getArticles(): List<ArticleItem>
+    @GET("/articles")
+    suspend fun getArticles(): Response<List<ArticleItem>>
 
-    @GET("tests")
-    suspend fun getTests(): List<TestItem>
+    @GET("/tests")
+    suspend fun getTests(): Response<List<TestItem>>
 }
