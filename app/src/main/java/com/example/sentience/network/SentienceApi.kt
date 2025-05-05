@@ -7,6 +7,16 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import android.util.Log
 
+
+data class ArticlesResponse(
+    val articles: List<ArticleItem>
+)
+
+data class TestsResponse(
+    val tests: List<TestItem>
+)
+
+
 interface SentienceApi {
     companion object {
         private const val TAG = "SentienceApi"
@@ -28,8 +38,8 @@ interface SentienceApi {
     suspend fun askAI(@Body request: AIRequest): Response<AIResponse>
 
     @GET("/articles")
-    suspend fun getArticles(): Response<List<ArticleItem>>
+    suspend fun getArticles(): Response<ArticlesResponse>
 
     @GET("/tests")
-    suspend fun getTests(): Response<List<TestItem>>
+    suspend fun getTests(): Response<TestsResponse>
 }

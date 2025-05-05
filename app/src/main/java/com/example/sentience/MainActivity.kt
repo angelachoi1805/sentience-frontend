@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
                 val username by authViewModel.username.collectAsState()
                 val articles by articlesViewModel.articles.collectAsState()
                 val tests by testsViewModel.tests.collectAsState()
+                Log.d("TESTS ", "$tests")
                 val articlesError by articlesViewModel.error.collectAsState()
                 val testsError by testsViewModel.error.collectAsState()
                 val usernameError by authViewModel.usernameError.collectAsState()
@@ -146,7 +147,8 @@ class MainActivity : ComponentActivity() {
                     composable("chat") {
                         ChatScreen(
                             username = username ?: "User",
-                            viewModel = chatViewModel
+                            viewModel = chatViewModel,
+                            onBack = { navController.popBackStack() }
                         )
                     }
 

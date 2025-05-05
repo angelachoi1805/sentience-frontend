@@ -44,8 +44,8 @@ class TestRepository(private val api: SentienceApi, private val tokenManager: To
             
             if (response.isSuccessful) {
                 response.body()?.let { tests ->
-                    Log.d(TAG, "Successfully fetched ${tests.size} tests")
-                    TestResult.Success(tests)
+                    Log.d(TAG, "Successfully fetched ${tests.tests.size} tests")
+                    TestResult.Success(tests.tests)
                 } ?: run {
                     Log.e(TAG, "Response body is null")
                     TestResult.Error("No tests found")

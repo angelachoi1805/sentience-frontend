@@ -35,8 +35,8 @@ class ArticleRepository(private val api: SentienceApi, private val tokenManager:
             
             if (response.isSuccessful) {
                 response.body()?.let { articles ->
-                    Log.d(TAG, "Successfully fetched ${articles.size} articles")
-                    ArticleResult.Success(articles)
+                    Log.d(TAG, "Successfully fetched ${articles.articles.size} articles")
+                    ArticleResult.Success(articles.articles)
                 } ?: run {
                     Log.e(TAG, "Response body is null")
                     ArticleResult.Error("No articles found")
