@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
         )[TestsViewModel::class.java]
 
         chatViewModel = ChatViewModel(chatRepository)
-
+        val profileViewModel = ProfileViewModel(ProfileRepository(api))
         // Check authentication state
         val isAuthenticated = tokenManager.getToken() != null
 
@@ -132,7 +132,10 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             viewModel = authViewModel,
                             onNavigateToRegister = { navController.navigate("register") },
-                            onLoginSuccess = { navController.navigate("home") }
+                            onLoginSuccess = {
+                                navController.navigate("home")
+
+                            }
                         )
                     }
 
@@ -194,7 +197,16 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                    composable("profile") {
+                        ProfileScreen(
+                            username = username ?: "User",
+                            onBack = {
+                                navController.navigate("home")
+                            },
+                            profileViewModel= profileViewModel
 
+                        )
+                    }
                     composable("articles") {
                         AllArticlesScreen(
                             articles = articles,

@@ -16,12 +16,11 @@ data class TestsResponse(
     val tests: List<TestItem>
 )
 
-
 interface SentienceApi {
     companion object {
         private const val TAG = "SentienceApi"
     }
-
+    
     // Login endpoint
     @POST("login")
     suspend fun login(@Body request: LoginRequest): Response<TokenResponse>
@@ -33,7 +32,6 @@ interface SentienceApi {
     @GET("/me")
     suspend fun getProfile(): Response<UserProfile>
 
-    // Ask AI endpoint
     @POST("/ask-ai")
     suspend fun askAI(@Body request: AIRequest): Response<AIResponse>
 
@@ -42,4 +40,7 @@ interface SentienceApi {
 
     @GET("/tests")
     suspend fun getTests(): Response<TestsResponse>
+
+    @GET("/tests_results")
+    suspend fun getTestResults(): Response<UserTestResponse>
 }
