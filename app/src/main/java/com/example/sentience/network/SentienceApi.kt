@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import android.util.Log
+import retrofit2.http.Path
 
 
 data class ArticlesResponse(
@@ -14,6 +15,49 @@ data class ArticlesResponse(
 
 data class TestsResponse(
     val tests: List<TestItem>
+)
+data class TestDetailsResponse(
+    val test: Test,
+    val questions: List<QuestionWithOptions>
+)
+
+data class Test(
+    val id: Int,
+    val title: String,
+    val description: String
+)
+
+data class QuestionWithOptions(
+    val question: Question,
+    val options: List<Option>
+)
+
+data class Question(
+    val id: Int,
+    val test_id: Int,
+    val text: String,
+    val order_number: Int
+)
+
+data class Option(
+    val id: Int,
+    val question_id: Int,
+    val option_text: String
+)
+
+data class EstimateTestRequest(
+    val answers: Map<Int, Int>  // Карта вопросов и выбранных ответов
+)
+data class EstimateTestResponse(
+    val message: String,
+    val result: TestResult
+)
+
+data class TestResult(
+    val test_id: Int,
+    val user_id: Int,
+    val score: Int,
+    val created_at: String
 )
 
 interface SentienceApi {
@@ -43,4 +87,12 @@ interface SentienceApi {
 
     @GET("/tests_results")
     suspend fun getTestResults(): Response<UserTestResponse>
+
+    @GET ("/tests/{id}")
+    suspend fun getTestDetails(@Path("id") id: Int): Response<TestDetailsResponse>
+    @POST("/estimate-test/{test_id}")
+    suspend fun estimateTest(
+        @Path("test_id") test_id: Int,
+        @Body request: EstimateTestRequest
+    ): Response<EstimateTestResponse>
 }

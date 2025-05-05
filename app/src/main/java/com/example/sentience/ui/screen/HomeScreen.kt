@@ -1,6 +1,7 @@
 package com.example.sentience.ui.screen
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,8 @@ import java.util.*
 import com.example.sentience.model.ArticleItem
 import com.example.sentience.model.TestItem
 import com.example.sentience.ui.component.*
+import com.example.sentience.viewmodel.ArticlesViewModel
+import com.example.sentience.viewmodel.TestsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -30,13 +33,18 @@ fun HomeScreen(
     mood: Float,
     moodDescription: String,
     selectedItem: BottomNavItem,
-    onItemSelected: (BottomNavItem) -> Unit
+    onItemSelected: (BottomNavItem) -> Unit,
+    testsViewModel: TestsViewModel,
+    articlesViewModel: ArticlesViewModel
 ) {
     // Mood History for past week
     val today = LocalDate.now()
     val pastWeek = (0..6).map { today.minusDays((6 - it).toLong()) }
     val weekdays = pastWeek.map { it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
-
+    LaunchedEffect(Unit) {
+        testsViewModel.loadTests()
+        articlesViewModel.loadArticles()
+    }
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
@@ -86,6 +94,8 @@ fun HomeScreen(
             )
 
             // Tests Row
+            Log.d("TESTII", "$tests")
+
             TestCardRow(
                 tests = tests,
                 onSeeAllClick = { },

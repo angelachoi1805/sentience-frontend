@@ -83,7 +83,7 @@ fun ResultCard(result: UserTestResultItem) {
         colors = CardDefaults.cardColors(containerColor = primaryContainerLight)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = result.result_text, style = MaterialTheme.typography.titleMedium)
+            Text(text = result.result_text ?: "", style = MaterialTheme.typography.titleMedium)
             Text(text = "Score: ${result.total_score}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Date: ${result.created_at}", style = MaterialTheme.typography.bodySmall)
         }

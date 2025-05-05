@@ -187,6 +187,8 @@ class MainActivity : ComponentActivity() {
                             mood = mood.value,
                             moodDescription = moodDescriptions[mood.value.toInt()],
                             selectedItem = selectedItem.value,
+                            testsViewModel = testsViewModel,
+                            articlesViewModel = articlesViewModel,
                             onItemSelected = { newItem -> 
                                 selectedItem.value = newItem
                                 when (newItem) {
@@ -215,6 +217,18 @@ class MainActivity : ComponentActivity() {
                             },
                             onNavigateBack = { navController.popBackStack() }
                         )
+                    }
+                    composable("test/{testId}") {
+                        backStackEntry->
+                        val testId = backStackEntry.arguments?.getString("testId")?.toIntOrNull()
+                        val test = tests.find { it.id == testId }
+                            if (test != null){
+                                TestScreen(
+                                    test = test,
+                                    testsViewModel = testsViewModel,
+                                    onNavigateBack = { navController.popBackStack() }
+                                )
+                            }
                     }
 
                     composable("article/{articleId}") { backStackEntry ->
