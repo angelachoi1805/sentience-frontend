@@ -32,18 +32,7 @@ fun HomeScreen(
     selectedItem: BottomNavItem,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
-    // Greeting and Mood State
-    var mood by remember { mutableStateOf(2f) }
-    val moodDescriptions = listOf(
-        "Woke up on the wrong side of the bed",
-        "Meh, could be worse",
-        "Just another day",
-        "Feeling pretty good",
-        "Over the moons!"
-    )
-
     // Mood History for past week
-    var moodHistory by remember { mutableStateOf(mutableMapOf<LocalDate, Int>()) }
     val today = LocalDate.now()
     val pastWeek = (0..6).map { today.minusDays((6 - it).toLong()) }
     val weekdays = pastWeek.map { it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
@@ -73,7 +62,7 @@ fun HomeScreen(
                 mood = mood,
                 onMoodChange = onMoodChange,
                 onSubmitMood = onSubmitMood,
-                moodDescription = moodDescriptions[mood.toInt()]
+                moodDescription = moodDescription
             )
 
             // Mood Calendar

@@ -5,22 +5,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import com.example.sentience.ui.theme.*
 import com.example.sentience.viewmodel.ChatViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     username: String,
     viewModel: ChatViewModel,
-    onBack: () -> Unit // функция для навигации назад
+    onBack: () -> Unit
 ) {
     var message by remember { mutableStateOf(TextFieldValue("")) }
     var messages by remember { mutableStateOf(listOf<Pair<String, String?>>()) }
@@ -36,12 +38,30 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chat with Sentience") },
+                title = { 
+                    Text(
+                        "Chat with Sentience",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         }
     ) { paddingValues ->
@@ -49,50 +69,76 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                reverseLayout = true
+                reverseLayout = true,
+                contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(messages.reversed()) { (userMsg, aiMsg) ->
                     ChatBubble(text = userMsg, isUser = true)
                     aiMsg?.let {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         ChatBubble(text = it, isUser = false)
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = message,
                     onValueChange = { message = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("Enter your message...") }
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    placeholder = { 
+                        Text(
+                            "Enter your message...",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                    )
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = {
-                    if (message.text.isNotBlank()) {
-                        viewModel.askAI(message.text)
-                        messages = messages + (message.text to null)
-                        message = TextFieldValue("")
-                    }
-                }) {
-                    Text("Send")
+                Button(
+                    onClick = {
+                        if (message.text.isNotBlank()) {
+                            viewModel.askAI(message.text)
+                            messages = messages + (message.text to null)
+                            message = TextFieldValue("")
+                        }
+                    },
+                    modifier = Modifier.height(56.dp),
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(
+                        "Send",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
                 }
             }
         }
     }
 }
+
 @Composable
 fun ChatBubble(text: String, isUser: Boolean) {
     Box(
@@ -102,14 +148,20 @@ fun ChatBubble(text: String, isUser: Boolean) {
         contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
     ) {
         Surface(
-            color = if (isUser) primaryContainerLight else tertiaryContainerLight,
-            shape = MaterialTheme.shapes.medium,
-            tonalElevation = 2.dp
+            color = if (isUser) MaterialTheme.colorScheme.primaryContainer 
+                   else MaterialTheme.colorScheme.surfaceVariant,
+            shape = MaterialTheme.shapes.large,
+            tonalElevation = 4.dp,
+            shadowElevation = 4.dp,
+            modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             Text(
                 text = text,
-                modifier = Modifier.padding(12.dp),
-                color = if (isUser) onPrimaryContainerLight else onTertiaryLight
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer
+                           else MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
