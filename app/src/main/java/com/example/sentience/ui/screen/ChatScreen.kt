@@ -35,6 +35,12 @@ fun ChatScreen(
         }
     }
 
+    val flatMessages = messages.flatMap { (user, ai) ->
+        listOf(
+            user to true
+        ) + if (ai != null) listOf(ai to false) else emptyList()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -78,13 +84,9 @@ fun ChatScreen(
                 reverseLayout = true,
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                items(messages.reversed()) { (userMsg, aiMsg) ->
-                    ChatBubble(text = userMsg, isUser = true)
-                    aiMsg?.let {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ChatBubble(text = it, isUser = false)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
+                items(flatMessages.asReversed()) { (text, isUser) ->
+                    ChatBubble(text = text, isUser = isUser)
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 

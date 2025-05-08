@@ -21,6 +21,7 @@ import com.example.sentience.viewmodel.TestsViewModel
 fun TestScreen(
     test: TestItem,
     onNavigateBack: () -> Unit,
+    onSubmit: ()-> Unit,
     testsViewModel: TestsViewModel
 ) {
     val testDetails by testsViewModel.selectedTestDetails.collectAsState()
@@ -93,7 +94,8 @@ fun TestScreen(
                 onClick = {
                     val answers = selectedAnswers.toMap()
 
-                    testsViewModel.submitTest(test.id, answers )
+                        testsViewModel.submitTest(test.id, answers)
+                    onSubmit()
                 },
                 modifier = Modifier
                     .fillMaxWidth(),

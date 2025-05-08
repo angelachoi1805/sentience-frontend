@@ -267,7 +267,9 @@ class MainActivity : ComponentActivity() {
                                 TestScreen(
                                     test = test,
                                     testsViewModel = testsViewModel,
-                                    onNavigateBack = { navController.popBackStack() }
+                                    onNavigateBack = { navController.popBackStack() },
+                                    onSubmit = {navController.navigate("profile")}
+
                                 )
                             }
                     }
