@@ -8,12 +8,14 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.sentience.viewmodel.AuthViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -24,17 +26,20 @@ import com.example.sentience.util.TokenManager
 fun RegisterScreen(
     viewModel: AuthViewModel,
     onNavigateBack: () -> Unit,
-    onRegisterSuccess: () -> Unit = {}
+    onNavigateToTerms: () -> Unit,
+    onRegisterSuccess: () -> Unit = {},
+    termsAccepted: Boolean,
+    onTermsAcceptedChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val registerResult by viewModel.registerResult.collectAsState()
     val registerError by viewModel.registerError.collectAsState()
     val isRegistering by viewModel.isRegistering.collectAsState()
 
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var profilePic by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+    var username by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var profilePic by rememberSaveable { mutableStateOf("") }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     // Show error message if any
     registerError?.let { error ->
@@ -58,7 +63,8 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .padding(bottom = 80.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -112,14 +118,50 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = termsAccepted,
+                onCheckedChange = { onTermsAcceptedChange(it) },
+                modifier = Modifier.padding(end = 8.dp),
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.primary,
+                    uncheckedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            )
+
+            TextButton(
+                onClick = onNavigateToTerms,
+                modifier = Modifier.padding(0.dp)
+            ) {
+                Text(
+                    text = "I accept the Terms & Conditions",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                if (username.isNotBlank() && password.isNotBlank()) {
+                if (username.isNotBlank() && password.isNotBlank() && termsAccepted) {
                     viewModel.register(username, password, profilePic)
                 } else {
-                    Toast.makeText(context, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        if (!termsAccepted) "Please accept the Terms & Conditions" else "Please fill in all required fields",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             modifier = Modifier

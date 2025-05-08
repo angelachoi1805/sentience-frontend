@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -129,21 +130,61 @@ class MainActivity : ComponentActivity() {
                     startDestination = if (isAuthenticated) "home" else "login"
                 ) {
                     composable("login") {
+                        val termsAccepted = rememberSaveable { mutableStateOf(false) }
+                        
+                        // Handle terms acceptance state from Terms screen
+                        LaunchedEffect(Unit) {
+                            navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>("termsAccepted")?.let { accepted ->
+                                termsAccepted.value = accepted
+                            }
+                        }
+
                         LoginScreen(
                             viewModel = authViewModel,
                             onNavigateToRegister = { navController.navigate("register") },
+                            onNavigateToTerms = { 
+                                navController.navigate("terms")
+                            },
                             onLoginSuccess = {
                                 navController.navigate("home")
-
-                            }
+                            },
+                            termsAccepted = termsAccepted.value,
+                            onTermsAcceptedChange = { termsAccepted.value = it }
                         )
                     }
 
                     composable("register") {
+                        val termsAccepted = rememberSaveable { mutableStateOf(false) }
+                        
+                        // Handle terms acceptance state from Terms screen
+                        LaunchedEffect(Unit) {
+                            navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>("termsAccepted")?.let { accepted ->
+                                termsAccepted.value = accepted
+                            }
+                        }
+
                         RegisterScreen(
                             viewModel = authViewModel,
                             onRegisterSuccess = { navController.navigate("home") },
-                            onNavigateBack = { navController.popBackStack() }
+                            onNavigateBack = { navController.popBackStack() },
+                            onNavigateToTerms = { 
+                                navController.navigate("terms")
+                            },
+                            termsAccepted = termsAccepted.value,
+                            onTermsAcceptedChange = { termsAccepted.value = it }
+                        )
+                    }
+
+                    composable("terms") {
+                        TermsAndConditionsScreen(
+                            onNavigateBack = { accepted ->
+                                navController.previousBackStackEntry?.savedStateHandle?.set("termsAccepted", accepted)
+                                navController.popBackStack()
+                            },
+                            onAcceptTerms = {
+                                navController.previousBackStackEntry?.savedStateHandle?.set("termsAccepted", true)
+                                navController.popBackStack()
+                            }
                         )
                     }
 
